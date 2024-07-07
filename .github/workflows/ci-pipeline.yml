@@ -41,6 +41,17 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y libldap2-dev libsasl2-dev libssl-dev
+        sudo apt-get install -y python3-dev libxml2-dev libxslt1-dev zlib1g-dev libjpeg-dev libpq-dev
+
+    - name: Install wkhtmltopdf
+      run: |
+        sudo apt-get install -y wkhtmltopdf
+
+    - name: Install Odoo
+      run: |
+        wget -O- https://nightly.odoo.com/odoo.key | sudo apt-key add -
+        echo "deb http://nightly.odoo.com/14.0/nightly/deb/ ./" | sudo tee /etc/apt/sources.list.d/odoo.list
+        sudo apt-get update && sudo apt-get install -y odoo
 
     - name: Install Python dependencies
       run: |
@@ -51,7 +62,6 @@ jobs:
       env:
         DATABASE_URL: postgresql://odoo:odoo@localhost:5432/odoo
       run: |
-        # Replace with your test command
         odoo --db_user=odoo --db_password=odoo --db_host=localhost --db_port=5432 --addons-path=addons -i your_module -d odoo --stop-after-init --test-enable
 
     - name: Lint Code
