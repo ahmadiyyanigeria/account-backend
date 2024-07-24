@@ -30,9 +30,8 @@ jobs:
 
     - name: Lint with pylint
       run: |
-        cd ./addons/account
-        pip install pylint-odoo
-        pylint --load-plugins=pylint_odoo -e odoolint .
+        pip install pylint pylint_odoo
+        pylint --rcfile=.pylintrc .
 
     - name: Run tests
       run: |
