@@ -30,7 +30,7 @@ jobs:
 
     - name: Lint with pylint
       run: |
-        sudo pip install pylint-odoo
+        pip install pylint-odoo
         pylint --load-plugins=pylint_odoo -e odoolint .
 
     - name: Run tests
