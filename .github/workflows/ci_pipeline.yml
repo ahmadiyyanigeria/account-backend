@@ -30,8 +30,6 @@ jobs:
 
     - name: Run tests
       run: |
-        pip install pytest
-        pytest
         python ./odoo-bin -i account --log-level=test -d minimal_database --test-enable --stop-after-init
 
     - name: Generate coverage report
