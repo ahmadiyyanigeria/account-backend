@@ -1,0 +1,43 @@
+name: CI Pipeline for Odoo
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-jammy
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.12'
+
+    - name: Install Postgres Client
+      run: |
+        sudo apt install postgresql postgresql-client -y
+
+    - name: Create DbUser
+      run: |
+        sudo -u postgres createuser -d -R -S $USER \
+        createdb $USER
+
+    - name: Install Dependencies
+      run: |
+        cd account-backend \
+        sudo ./setup/debinstall.sh
+
+    - name: Install rtlcss
+      run: |
+        sudo npm install -g rtlcss
+
+    - name: Run Odoo
+      run: |
+        cd account-backend \
+        python3 odoo-bin --addons-path=addons -d mydb
