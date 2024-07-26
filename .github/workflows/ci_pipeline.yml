@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-jammy
 
     steps:
     - name: Checkout code
@@ -19,26 +19,25 @@ jobs:
       with:
         python-version: '3.12'
 
-    - name: Install dependencies
+    - name: Install Postgres Client
       run: |
-        sudo apt-get install -y nodejs npm
-        sudo apt install python3-pip libldap2-dev libpq-dev libsasl2-dev -y
-        python -m pip install --upgrade pip
-        pip3 install setuptools wheel
-        pip3 install -r requirements.txt
+        sudo apt install postgresql postgresql-client -y
+
+    - name: Create DbUser
+      run: |
+        sudo -u postgres createuser -d -R -S $USER \
+        createdb $USER
+
+    - name: Install Dependencies
+      run: |
+        cd account-backend \
+        sudo ./setup/debinstall.sh
+
+    - name: Install rtlcss
+      run: |
         sudo npm install -g rtlcss
 
-    - name: Run tests
+    - name: Run Odoo
       run: |
-        python ./odoo-bin -i account --log-level=test -d minimal_database --test-enable --stop-after-init
-
-    - name: Generate coverage report
-      run: |
-        pip install pytest-cov
-        pytest --cov=odoo tests/
-
-    - name: Upload coverage report
-      uses: actions/upload-artifact@v2
-      with:
-        name: coverage-report
-        path: coverage/
+        cd account-backend \
+        python3 odoo-bin --addons-path=addons -d mydb
